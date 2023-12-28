@@ -1,0 +1,41 @@
+name: ssl
+
+permissions: write-all
+
+env:
+  TZ: Asia/Shanghai
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 分钟 小时 日期 月份 星期（0-6）//0代表星期天
+    - cron: '25 10 * * 4'
+
+jobs:
+  run-it:
+    runs-on: ubuntu-latest
+    name: ssl
+    steps:
+      - name: checkout private conf
+        uses: actions/checkout@v4
+        with:
+          repository: i18n-cron/conf
+          token: ${{ secrets.GH_PAT }}
+          path: conf
+
+      - name: checkout dist
+        uses: actions/checkout@v4
+        with:
+          repository: i18n-cron/dist
+          ref: ssl
+          path: dist
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: ssl
+        run: |
+          source conf/env.sh
+          source conf/ssl.sh
+          ./dist/run

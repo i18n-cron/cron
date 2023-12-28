@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@w5/jsext": "^0.0.1",
+    "@w5/loader": "^0.0.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@w5/coffee_plus": "^0.0.17"
+  }
+}

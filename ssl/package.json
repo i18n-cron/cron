@@ -1,0 +1,9 @@
+{
+  "name": "ssl",
+  "type": "module",
+  "devDependencies": {},
+  "dependencies": {
+    "@3-/alissl": "^0.1.2",
+    "@3-/dogessl": "^0.1.1"
+  }
+}

@@ -1,0 +1,1 @@
+../contabo.conf/KEY.mjs
