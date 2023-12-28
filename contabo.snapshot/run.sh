@@ -4,4 +4,4 @@ DIR=$(dirname $(realpath "$0"))
 cd $DIR
 
 set -ex
-exec ./lib/snapshot.js
+exec direnv exec . ./lib/main.js

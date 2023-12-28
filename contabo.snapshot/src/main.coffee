@@ -1,8 +1,10 @@
 #!/usr/bin/env coffee
 
-> ./api
+> ./api.js
 
 CPU_CORES_SNAPSHOT_LIMIT = {
+  24:1
+  10:4
   8:3
   6:2
   4:1
@@ -12,7 +14,7 @@ do =>
 # 没做分页
   {data} = await api 'compute/instances'
   for {instanceId, displayName, cpuCores} from data
-    limit = CPU_CORES_SNAPSHOT_LIMIT[cpuCores]
+    limit = CPU_CORES_SNAPSHOT_LIMIT[cpuCores] or 1
     {data} = await api "compute/instances/#{instanceId}/snapshots"
     n = data.length
     console.log '❯', displayName, 'snapshots limit', limit

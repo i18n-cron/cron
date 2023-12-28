@@ -1,8 +1,8 @@
 #!/usr/bin/env coffee
 
 > uuid > v4:uuid
-  ../KEY.mjs
 
+{default:KEY} = await import(process.env.CONTABO_KEY_JS)
 body = new FormData()
 body.append('grant_type','password')
 

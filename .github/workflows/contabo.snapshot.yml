@@ -1,0 +1,39 @@
+name: contabo 快照
+
+permissions: write-all
+
+env:
+  TZ: Asia/Shanghai
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 分钟 小时 日期 月份 星期（0-6）//0代表星期天
+    - cron: '1 0 * * *'
+
+jobs:
+  run-it:
+    runs-on: ubuntu-latest
+    name: contabo.snapshot
+    steps:
+      - name: checkout private conf
+        uses: actions/checkout@v4
+        with:
+          repository: i18n-cron/conf
+          token: ${{ secrets.GH_PAT }}
+          path: conf
+
+      - name: checkout dist
+        uses: actions/checkout@v4
+        with:
+          repository: i18n-cron/dist
+          ref: contabo.snapshot
+          path: dist
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: contabo.snapshot
+        run: |
+          CONTABO_KEY_JS=$(pwd)/conf/contabo.mjs ./dist/run

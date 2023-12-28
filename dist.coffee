@@ -13,7 +13,7 @@ ROOT = uridir import.meta
 dist = (name)=>
   cd ROOT
   await Promise.all [
-    $"./#{name}/build.sh"
+    $"cd #{name} && direnv allow && direnv exec . ./build.sh"
     $"cd dist && git checkout #{name} 2>/dev/null || git checkout -b #{name} && git pull || true"
   ]
   await esbuild.build({
@@ -45,7 +45,7 @@ dist = (name)=>
   await $"cd dist && chmod +x run && git add run && git commit -m. 2>/dev/null|| exit 0 && git push origin #{name}"
   return
 
-for i in ['ssl']
+for i in 'ssl contabo.snapshot'.split(' ')
   await dist i
 
 

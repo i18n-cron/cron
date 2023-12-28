@@ -1,5 +1,6 @@
 # 定时任务状态监控
 
+[![contabo 快照](https://github.com/i18n-cron/cron/actions/workflows/contabo.snapshot.yml/badge.svg)](https://github.com/i18n-cron/cron/actions/workflows/contabo.snapshot.yml)
 [![ssl](https://github.com/i18n-cron/cron/actions/workflows/ssl.yml/badge.svg)](https://github.com/i18n-cron/cron/actions/workflows/ssl.yml)
 [![cname flatten](https://github.com/i18n-cron/cname_cron/actions/workflows/cname_flatten.yml/badge.svg)](https://github.com/i18n-cron/cname_cron/actions/workflows/cname_flatten.yml)
 
