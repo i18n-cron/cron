@@ -5,7 +5,7 @@
   @3-/zx > $raw
   @3-/retry
   ./CONF.js > HOST_RSYNC HOST_DNS HOST_RSYNC_HOOK
-  fs > existsSync
+  fs > existsSync rmdirSync
   os > homedir
   path > join
 
@@ -31,44 +31,49 @@ acme = join adir,'acme.sh'
 
 if not existsSync acme
   await $"curl https://get.acme.sh | sh -s email=#{MAIL}"
+  await $"rsync -av #{CONF}/ssl/acme.sh/ ~/.acme.sh"
 
 rsync = (host, ip)=>
   $raw"""rsync -e "#{SSH}" --exclude='*.conf' --chown=ssl:www-data --chmod=750 --delete -avz ~/.acme.sh/#{host}_ecc ssl@#{ip}:/opt/ssl"""
 
 LOG = if IS_DEV then '--debug 2' else '>/dev/null'
 
-issue = retry (dns, host)=>
+hostSsl = (host)=>"#{join(adir,host)}_ecc"
+
+issue = (dns, host)=>
   console.log dns, host
   ssl = hostSsl host
   if not existsSync ssl
     tryed = 0
-    server_li = ['','--server letsencrypt']
+    server_li = ['--server google','','--server letsencrypt']
     for arg from server_li
       try
-        await $raw"#{acme} #{arg} --dns dns_#{dns} --issue -d #{host} -d *.#{host} #{LOG}"
+        await $raw"""#{acme} #{arg} --dns dns_#{dns} --issue -d "#{host}" -d "*.#{host}" #{LOG}"""
         break
       catch err
+        rmdirSync ssl, { recursive: true, force: true }
+        if IS_DEV
+          throw err
         if ++tryed == server_li.length
           throw err
         console.error err
 
   Promise.all(
     for to from (HOST_RSYNC[host] or [])
-      console.log '→',to
       rsync host, to
   )
 
-hostSsl = (host)=>"#{join(adir,host)}_ecc"
-
-ing = []
+if not IS_DEV
+  issue = retry issue
+  rsync = retry rsync
 
 host_all = []
 for [dns, host_li] from Object.entries HOST_DNS
   for host from host_li
     host_all.push host
-    ing.push issue dns, host
+    # 貌似不能并发，不然会出错
+    await issue dns, host
 
-await Promise.all ing
 await Promise.all(
   (
     for i from host_all
@@ -78,7 +83,8 @@ await Promise.all(
   ).concat [
     alissl
     dogessl
-  ].map (i)=>i()
+  ].map (i)=>
+    i()
 )
 
 process.exit()

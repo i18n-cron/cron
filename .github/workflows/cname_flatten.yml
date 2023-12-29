@@ -1,4 +1,4 @@
-name: ssl
+name: cname_flatten
 
 env:
   TZ: Asia/Shanghai
@@ -7,17 +7,21 @@ on:
   workflow_dispatch:
   schedule:
     # 分钟 小时 日期 月份 星期（0-6）//0代表星期天
-    - cron: '25 10 * * 4'
+    - cron: '0 * * * *'
+    - cron: '15 * * * *'
+    - cron: '30 * * * *'
+    - cron: '45 * * * *'
+    - cron: '59 * * * *'
   push:
     branches: [ main ]
     paths:
-      - 'ssl/**'
-      - '.github/workflows/ssl.yml'
+      - 'cname_flatten/**'
+      - '.github/workflows/cname_flatten.yml'
       - '.github/workflows/cron.yml'
 
 jobs:
-  ssl:
+  cname_flatten:
     uses: ./.github/workflows/cron.yml
     with:
-      name: ssl
+      name: cname_flatten
     secrets: inherit

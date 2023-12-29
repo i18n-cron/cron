@@ -1,0 +1,18 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@3-/coffee_plus": "^0.0.6",
+    "@3-/fetch": "^0.1.1",
+    "@3-/loader": "^0.0.2",
+    "@3-/retry": "^0.0.1",
+    "@3-/sleep": "^0.0.3",
+    "@3-/u8": "^0.1.1",
+    "@huaweicloud/huaweicloud-sdk-core": "^3.1.71",
+    "@huaweicloud/huaweicloud-sdk-dns": "^3.1.71",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "@3-/uridir": "^0.0.2",
+    "esbuild": "^0.19.10"
+  }
+}

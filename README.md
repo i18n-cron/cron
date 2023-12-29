@@ -2,7 +2,14 @@
 
 [![contabo 快照](https://github.com/i18n-cron/cron/actions/workflows/contabo.snapshot.yml/badge.svg)](https://github.com/i18n-cron/cron/actions/workflows/contabo.snapshot.yml)
 [![ssl](https://github.com/i18n-cron/cron/actions/workflows/ssl.yml/badge.svg)](https://github.com/i18n-cron/cron/actions/workflows/ssl.yml)
-[![cname flatten](https://github.com/i18n-cron/cname_cron/actions/workflows/cname_flatten.yml/badge.svg)](https://github.com/i18n-cron/cname_cron/actions/workflows/cname_flatten.yml)
+
+## CNAME 拉平
+
+定时任务版 [![cname_flatten](https://github.com/i18n-cron/cron/actions/workflows/cname_flatten.yml/badge.svg)](https://github.com/i18n-cron/cron/actions/workflows/cname_flatten.yml)
+
+独立运行版 [![cname flatten](https://github.com/i18n-cron/cname_cron/actions/workflows/cname_flatten.yml/badge.svg)](https://github.com/i18n-cron/cname_cron/actions/workflows/cname_flatten.yml)
+
+* 两个版本是一样的，修改配置需要都修改，因为 github action 定时最小时间间隔限制是 15 分钟，分仓库可以提高运行频率 *
 
 # 容器构建状态监控
 
