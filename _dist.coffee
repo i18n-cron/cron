@@ -45,7 +45,11 @@ dist = (name)=>
   await $"cd dist && chmod +x run && git add run && git commit -m. 2>/dev/null|| exit 0 && git push origin #{name}"
   return
 
-for i in 'ssl contabo.snapshot'.split(' ')
+{argv} = process
+argv = argv.slice(2)
+
+for i in (if argv.length then argv else 'ssl contabo.snapshot'.split(' '))
+  console.log i
   await dist i
 
 
