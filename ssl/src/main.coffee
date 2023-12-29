@@ -48,9 +48,9 @@ issue = retry (dns, host)=>
         await $raw"#{acme} #{arg} --dns dns_#{dns} --issue -d #{host} -d *.#{host} #{LOG}"
         break
       catch err
-        console.error err
         if ++tryed == server_li.length
           throw err
+        console.error err
 
   Promise.all(
     for to from (HOST_RSYNC[host] or [])
