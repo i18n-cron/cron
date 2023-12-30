@@ -14,7 +14,7 @@ dist = (name)=>
   cd ROOT
   await Promise.all [
     $"cd #{name} && direnv allow && direnv exec . ./build.sh"
-    $"cd dist && git checkout #{name} 2>/dev/null || git checkout -b #{name} && git pull || true"
+    $"cd dist && rm -rf * && git checkout #{name} 2>/dev/null || git checkout -b #{name} && git pull || true"
   ]
   await esbuild.build({
     entryPoints: [
@@ -28,7 +28,7 @@ dist = (name)=>
     legalComments: 'none'
     platform: 'node'
     banner: {
-      js: "import { createRequire as topLevelCreateRequire } from 'module';\n const require = topLevelCreateRequire(import.meta.url);"
+      js: "import {createRequire as topLevelCreateRequire} from 'module';const require=topLevelCreateRequire(import.meta.url)"
     }
   })
 

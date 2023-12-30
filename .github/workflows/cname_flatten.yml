@@ -20,6 +20,18 @@ on:
       - '.github/workflows/cron.yml'
 
 jobs:
+  # ipv6:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup WARP
+  #       uses: fscarmen/warp-on-actions@v2
+  #     - name: ipv6
+  #       run: |
+  #         set -x
+  #         curl -m6 -i https://i18n.site/.i || true
+  #         curl -m6 -i --resolve "i18n.site:443:111.63.51.41" https://i18n.site/.i || true
+  #         curl -m6 -i --resolve "i18n.site:443:111.63.1.1" https://i18n.site/.i || true
+  #         curl -m9 -6 https://ifconfig.co || true
   cname_flatten:
     uses: ./.github/workflows/cron.yml
     with:

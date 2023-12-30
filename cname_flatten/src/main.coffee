@@ -12,7 +12,6 @@
 
 default_view = 'default_view'
 
-
 ###
 
 令牌申请
@@ -135,12 +134,16 @@ zoneIdByName = retry (name)=>
   return
 
 main = =>
+  all_result = []
   for [type_li, name, default_host, cname] in CNAME
+    all_result.unshift [name]
     zoneId = await zoneIdByName(name)
     if not zoneId
       console.error name, 'not found'
       continue
+
     for type from type_li.split(',')
+      all_result[0].push result = [type]
       exist = await recordsByZoneId(zoneId, name, type)
 
       to_update = []
@@ -222,8 +225,8 @@ main = =>
         to_rm.push id
         console.log 'rm line',name,type,line
       await rm zoneId, to_rm
-      console.log 'done',name
-  return
+      result.push {update:to_update.length,create:to_create.length}
+  return all_result
 
-await main()
+console.log JSON.stringify await main()
 process.exit()

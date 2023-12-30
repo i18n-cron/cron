@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-set -o allexport
-
 PWDDIR=$(pwd)
+
+set -o allexport
 
 CONF=$(dirname $(realpath $BASH_SOURCE))/conf
 
