@@ -12,7 +12,7 @@ await esbuild.build({
   legalComments: 'none'
   platform: 'node'
   banner: {
-    js: "import { createRequire as topLevelCreateRequire } from 'module';\n const require = topLevelCreateRequire(import.meta.url);"
+    js: '''import { createRequire as topLevelCreateRequire } from 'module';\n const require = topLevelCreateRequire(import.meta.url);'''
   }
 })
 

@@ -2,6 +2,7 @@
 
 > @3-/alissl
   @3-/dogessl
+  @3-/baidussl
   @3-/zx > $raw
   @3-/retry
   ./CONF.js > HOST_RSYNC HOST_DNS HOST_RSYNC_HOOK
@@ -82,6 +83,7 @@ await Promise.all(
         $"#{SSH} ssl@#{i} #{hook}"
   ).concat [
     alissl
+    baidussl
     dogessl
   ].map (i)=>
     i()

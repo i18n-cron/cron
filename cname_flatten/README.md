@@ -22,7 +22,9 @@
 
    ![](https://i-01.eu.org/2023/12/WRh2On9.webp)
 
-5. 启用 [github action](https://github.com/i18n-cron/cname_cron/actions)，我配置的是每 15 分钟运行一次。
+5. 在网站根目录下创建一个 `.i` ，内容为小写的网站域名，比如 `i18n.site`，用来做效验。
+
+6. 启用 [github action](https://github.com/i18n-cron/cname_cron/actions)，我配置的是每 15 分钟运行一次。
 
    ![](https://i-01.eu.org/2023/12/DKmHaXX.webp)
 
