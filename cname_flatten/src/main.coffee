@@ -1,232 +1,109 @@
 #!/usr/bin/env coffee
+> ./App.js
 
-> @huaweicloud/huaweicloud-sdk-core:core
-  @huaweicloud/huaweicloud-sdk-dns/v2/public-api.js:dns
-  @3-/sleep
-  @3-/retry
-  lodash-es > chunk
-  @3-/u8/u8eq.js
-  ./doh.js
-  ./DNS.js:@ > DEFAULT_EDNS
+# @3-/ipreq/fTxt.js
 
+process.on 'uncaughtException', (err)=>
+  console.error('uncaughtException : ' + err)
+  return
 
-default_view = 'default_view'
+{env} = process
 
-###
-
-令牌申请
-https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/apiCredential
-
-API 调试
-https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListPublicZones
-
-###
 {
-  HW_AK
-  HW_SK
-  CNAME
-} = process.env
+  PORT
+} = env
 
-endpoint = "https://dns.cn-north-4.myhuaweicloud.com"
-project_id = ""
+# Bun.serve({
+#   fetch(req) {
+#     const url = new URL(req.url);
+#     if (url.pathname === "/") return new Response("Home page!");
+#     if (url.pathname === "/blog") return new Response("Blog!");
+#     return new Response("404!");
+#   },
+# });
+# To configure which port and hostname the server will listen on:
+# 要配置服务器将侦听的端口和主机名：
 
-CNAME = (
-  for i in CNAME.split("\n")
-    i = i.trim()
-    if i
-      i.split(' ')
-    else
-      continue
-)
+PORT = Number.parseInt(PORT) || 3000
 
-credentials = new core.BasicCredentials()
-.withAk(HW_AK)
-.withSk(HW_SK)
-.withProjectId(project_id)
-client = dns.DnsClient.newBuilder()
-.withCredential(credentials)
-.withEndpoint(endpoint)
-.build()
+console.log 'http://127.0.0.1:'+PORT
 
-rm = retry (zoneId, recordsetId)=>
-  if recordsetId.length
-    for li from chunk(recordsetId,100)
-      request = new dns.BatchDeleteRecordSetWithLineRequest()
-      request.zoneId = zoneId
-      body = new dns.BatchDeleteRecordSetWithLineRequestBody()
-      body.withRecordsetIds(li)
-      request.withBody(body)
-      await client.batchDeleteRecordSetWithLine(request)
-  return
-
-
-create = retry (zoneId, type, name, all)=>
-  if not all.length
-    return
-
-  for li from chunk(all,20)
-    request = new dns.CreateRecordSetWithBatchLinesRequest()
-    request.zoneId = zoneId
-    body = new dns.CreateRSetBatchLinesReq()
-    body.withLines li.map ([line,records])=>
-      console.log 'new', name, type, line
-      new dns.BatchCreateRecordSetWithLine()
-            .withLine(line)
-            .withRecords(records)
-    body.withType(type)
-    body.withName(name+'.')
-    request.withBody(body)
-    await client.createRecordSetWithBatchLines(request)
-  return
-
-
-recordsByZoneId = retry (zoneId, name, type)=>
-  exist = new Map
-  offset = 0
-  limit = 500
-  to_rm = []
-  loop
-    request = new dns.ShowRecordSetByZoneRequest()
-    Object.assign(request, {
-      zoneId
-      limit
-      type
-      offset
-      state: 'ACTIVE'
-    })
-    offset += limit
-    {
-      recordsets
-      metadata:{
-        total_count
-      }
-    } = await client.showRecordSetByZone(request)
-    for i from recordsets
-      if i.name.slice(0,-1) == name
-        {id,line,records} = i
-        pre = exist.get(line)
-        if pre
-          console.log '删除重复线路',line
-          to_rm.push id
-          continue
-        records.sort()
-        exist.set(line,[
-          id
-          records
-        ])
-    console.log total_count
-    if offset >= total_count
-      break
-  console.log name, type+'记录条目数', exist.size
-  await rm(zoneId, to_rm)
-  return exist
-
-zoneIdByName = retry (name)=>
-  request = new dns.ListPublicZonesRequest()
-  request.name = name
-  result = await client.listPublicZones(request)
-  loop
-    if result.httpStatusCode == 200
-      zoneId = result.zones[0]?.id
-      if zoneId
-        return zoneId
-    console.error(result)
-  return
-
-main = =>
-  all_result = []
-  for [type_li, name, default_host, cname] in CNAME
-    all_result.unshift [name]
-    zoneId = await zoneIdByName(name)
-    if not zoneId
-      console.error name, 'not found'
-      continue
-
-    for type from type_li.split(',')
-      all_result[0].push result = [type]
-      exist = await recordsByZoneId(zoneId, name, type)
-
-      to_update = []
-      to_create = []
-
-      _doh = doh.bind(undefined,type)
-
-      add = (line, li)=>
-        if li.length
-          pre = exist.get(line)
-          if pre
-            exist.delete(line)
-            if u8eq(pre[1],li)
-              console.log '✅',line,type,name,li.length
-            else
-              to_update.push [
-                pre[0]
-                li
-              ]
-          else
-            to_create.push [
-              line
-              li
-            ]
-        return
-
-      global = await _doh(default_host,DEFAULT_EDNS)
-      add default_view, global
-      global_ignore = new Set(global)
-      ing = []
-
-      for [line, edns, sub] from DNS
-        ignore = structuredClone(global_ignore)
-
-        li = await _doh(cname, edns)
-        t = []
-        for i in li
-          if not ignore.has i
-            ignore.add(i)
-            t.push i
-        add line,t
-
-        add_no_ignore = (line, edns)=>
-          li = await _doh(cname,edns)
-          if not li.length
-            console.log name, line, 'not found'
-            return
-          li = li.filter (i)=>not ignore.has i
-          if not li.length
-            console.log name, line, 'same as 默认区域'
-            return
-          add line,li
-          return
-
-        for i from Object.entries sub
-          ing.push add_no_ignore(...i)
-
-      await Promise.all ing
-
-      await create zoneId, type, name, to_create
-      if to_update.length
-        for update_li from chunk(to_update, 50)
-          request = new dns.BatchUpdateRecordSetWithLineRequest()
-          request.zoneId = zoneId
-          body = new dns.BatchUpdateRecordSetWithLineReq()
-
-          body.withRecordsets update_li.map ([id, li])=>
-            new dns.BatchUpdateRecordSet()
-              .withId(id)
-              .withRecords(li)
-
-          request.withBody(body)
-          await client.batchUpdateRecordSetWithLine(request)
-
-      to_rm = []
-      for [line,[id]] from exist.entries()
-        if line == default_view
-          continue
-        to_rm.push id
-        console.log 'rm line',name,type,line
-      await rm zoneId, to_rm
-      result.push {update:to_update.length,create:to_create.length}
-  return all_result
-
-console.log JSON.stringify await main()
-process.exit()
+Bun.serve({
+  port: PORT
+  fetch: (req) =>
+    r = await App.call req
+    if not (
+      r.constructor == String \
+      or \
+      r instanceof Buffer \
+      or \
+      r instanceof Uint8Array
+    )
+      r = JSON.stringify(r)
+    return new Response(r)
+})
+#   uWebSockets.js:uWs
+#
+# # https://github.com/uNetworking/uWebSockets.js/tree/master/examples
+#
+#
+#
+#
+#
+# do =>
+#   uWs.App()
+#     .get(
+#       '/*'
+#       (res, req) =>
+#         url = req.getUrl().slice(1)
+#         method = req.getMethod()
+#         console.log method, url
+#         res.onAborted =>
+#           res.aborted = true
+#           return
+#         try
+#           r = await app.call(
+#             new Proxy(
+#               {
+#                 url
+#               }
+#               get: (self, name) =>
+#                 {
+#                   head:=>
+#                     r = []
+#                     self.forEach (k,v)=>
+#                       r.push [k,v]
+#                     r
+#                   url:=>
+#                 }[name]() or self[name]
+#             )
+#             res
+#           )
+#           if Array.isArray(r)
+#             r = JSON.stringify r
+#           code = '200'
+#         catch err
+#           console.error(
+#             '❌'
+#             method
+#             url
+#             err
+#           )
+#           r = err.toString()
+#           code = '500'
+#         if not res.aborted
+#           res.cork =>
+#             console.log r
+#             res.writeStatus(code)
+#             #.writeHeader('IsExample', 'Yes')
+#             .end r
+#             return
+#         return
+#     ).listen(
+#       PORT
+#       (listenSocket) =>
+#         if listenSocket
+#           console.log('LISTEN '+PORT)
+#         return
+#     )
+#   return

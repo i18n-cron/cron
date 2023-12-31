@@ -1,7 +1,0 @@
-{
-  "type": "module",
-  "dependencies": {
-    "@3-/ipreq": "^0.1.4",
-    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.38.0"
-  }
-}

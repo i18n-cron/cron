@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
-DIR=$(realpath $0) && DIR=${DIR%/*}
+DIR=$(dirname $(realpath "$0"))
 cd $DIR
 set -ex
 
 ./build.sh
-./lib/main.js
+
+if [ ! -n "$1" ]; then
+  exec bun --smol run --bun ./lib/main.js
+else
+  exec ./${@:1}
+fi

@@ -20,7 +20,7 @@ dist = (name)=>
     ]
     outfile: run_js
     bundle: true
-    minify: true
+    minify: false
     sourcemap: false
     format: 'esm'
     legalComments: 'none'
