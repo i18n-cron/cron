@@ -9,12 +9,11 @@
   {pathname} = new URL @url
   path = pathname.slice(1)
 
-  for i from ['A/','AAAA/']
-    if path.startsWith i
-      args = path.split('/')
+  args = path.split('/')
+  if args.length == 4
+    if ['A','AAAA'].includes args[0]
       # A 3ti.site 3ti.site.s2-web.dogedns.com
-      if args.length == 3
-        return flatten(...args)
+      return flatten(...args)
 
  #
   # func = MAP[path]

@@ -12,7 +12,7 @@ ROOT = uridir import.meta
 
 dist = (name)=>
   cd ROOT
-  $"direnv allow && direnv exec . ./build.sh"
+  await $"direnv allow && direnv exec . ./build.sh"
   run_js = 'lib/run.js'
   await esbuild.build({
     entryPoints: [

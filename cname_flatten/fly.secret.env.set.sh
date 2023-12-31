@@ -12,4 +12,7 @@ setenv() {
   done
 }
 
+
+direnv exec . flyctl secrets set NODE_TLS_REJECT_UNAUTHORIZED=0
+
 setenv HW_AK HW_SK
