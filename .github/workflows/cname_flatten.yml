@@ -14,13 +14,13 @@ jobs:
       - name: flatten
         run: |
           fetch(){
-            curl --connect-timeout 60 --max-time 300 --retry 10 --retry-delay 0 https://cname-flatten.fly.dev/$1
+            curl -sS --connect-timeout 60 --max-time 300 --retry 10 --retry-delay 0 https://cname-flatten.fly.dev/$1
           }
           fcname(){
             fetch A/$1 &
             fetch AAAA/$1 &
-            wait
           }
           set -ex
           fcname i18n.site/i18n.site.a.bdydns.com/user0.cf
           fcname 3ti.site/3ti.site.s2-web.dogedns.com/u-01.eu.org
+          wait
