@@ -23,10 +23,17 @@ dump = (r)=>
   loop
     try
       if r.constructor == String
-        json = true
+        break
     catch
+      json = true
       break
-    json = (r instanceof Buffer) or (r instanceof Uint8Array)
+    json = not (
+      (
+        r instanceof Buffer
+      ) or (
+        r instanceof Uint8Array
+      )
+    )
     break
 
   if json
@@ -87,7 +94,7 @@ do =>
           code = '500'
         if not res.aborted
           res.cork =>
-            console.log r
+            console.log r, typeof r
             res.writeStatus(code)
             #.writeHeader('IsExample', 'Yes')
             .end r
