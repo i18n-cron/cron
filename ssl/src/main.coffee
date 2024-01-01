@@ -35,8 +35,11 @@ if not existsSync acme
   await $"curl https://get.acme.sh | sh -s email=#{MAIL}"
   await $"rsync -av #{CONF}/ssl/acme.sh/ ~/.acme.sh"
 
-rsync = (host, ip)=>
-  $raw"""rsync -e "#{SSH}" --exclude='*.conf' --chown=ssl:www-data --chmod=750 --delete -avz ~/.acme.sh/#{host}_ecc ssl@#{ip}:/opt/ssl"""
+HOST_ALL = new Set
+
+rsync = (host, pc)=>
+  HOST_ALL.add pc
+  $raw"""rsync -e "#{SSH}" --exclude='*.conf' --chown=ssl:www-data --chmod=750 --delete -avz ~/.acme.sh/#{host}_ecc ssl@#{pc}:/opt/ssl"""
 
 LOG = if IS_DEV then '--debug 2' else '>/dev/null'
 
@@ -77,10 +80,8 @@ issue = (dns, host)=>
     await enable()
   return
 
-host_all = []
 for [dns, host_li] from Object.entries HOST_DNS
   for host from host_li
-    host_all.push host
     # 貌似不能并发，不然会出错
     await issue dns, host
 
@@ -93,12 +94,11 @@ upload = await Promise.all(
     i()
 )
 
-
-for i from host_all
+for i from HOST_ALL
   hook = HOST_RSYNC_HOOK[i]
   if hook
     for cmd from hook
-      await $"#{SSH} ssl@#{i} #{cmd}"
+      await $raw"#{SSH} ssl@#{i} #{cmd}"
 
 await upload
 

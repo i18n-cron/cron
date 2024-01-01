@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 > @3-/fetch/fBin.js
   @3-/nt/loads.js
 
@@ -12,7 +13,7 @@ splitKeyLoad = (conf)=>
         else
           pre.push val
       else
-        r[host] = [val]
+        r[host] = if Array.isArray(val) then [...val] else [val]
   r
 
 {
