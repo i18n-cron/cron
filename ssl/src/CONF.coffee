@@ -7,9 +7,12 @@ splitKeyLoad = (conf)=>
     for host in host_li.split('|')
       pre = r[host]
       if Array.isArray(pre)
-        pre.push ...val
+        if Array.isArray(val)
+          pre.push ...val
+        else
+          pre.push val
       else
-        r[host] = val
+        r[host] = [val]
   r
 
 {

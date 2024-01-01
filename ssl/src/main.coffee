@@ -84,18 +84,22 @@ for [dns, host_li] from Object.entries HOST_DNS
     # 貌似不能并发，不然会出错
     await issue dns, host
 
-await Promise.all(
-  (
-    for i from host_all
-      hook = HOST_RSYNC_HOOK[i]
-      if hook
-        $"#{SSH} ssl@#{i} #{hook}"
-  ).concat [
+upload = await Promise.all(
+  [
     alissl
     baidussl
     dogessl
   ].map (i)=>
     i()
 )
+
+
+for i from host_all
+  hook = HOST_RSYNC_HOOK[i]
+  if hook
+    for cmd from hook
+      await $"#{SSH} ssl@#{i} #{cmd}"
+
+await upload
 
 process.exit()
