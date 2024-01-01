@@ -19,13 +19,17 @@ PORT = Number.parseInt(PORT) || 3000
 console.log 'http://127.0.0.1:'+PORT
 
 dump = (r)=>
-  if not (
-    r?.constructor == String \
-    or \
-    r instanceof Buffer \
-    or \
-    r instanceof Uint8Array
-  )
+  + json
+  loop
+    try
+      if r.constructor == String
+        json = true
+    catch
+      break
+    json = (r instanceof Buffer) or (r instanceof Uint8Array)
+    break
+
+  if json
     r = JSON.stringify(r)
   return r
 
@@ -53,7 +57,7 @@ do =>
           res.aborted = true
           return
         try
-          r = await App.call(
+          r = dump await App.call(
             new Proxy(
               {
                 path
@@ -71,8 +75,6 @@ do =>
             )
             res
           )
-          if Array.isArray(r)
-            r = JSON.stringify r
           code = '200'
         catch err
           console.error(
