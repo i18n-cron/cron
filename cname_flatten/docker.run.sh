@@ -4,7 +4,7 @@ DIR=$(realpath $0) && DIR=${DIR%/*}
 cd $DIR
 set -ex
 
-source ./docker.build.sh
+source docker.build.sh
 
 docker stop $name || true
 PORT=3000

@@ -7,6 +7,7 @@
   @3-/retry
   ./CONF.js > HOST_RSYNC HOST_DNS HOST_RSYNC_HOOK
   fs > existsSync rmdirSync
+  @3-/hwdns/acme.js:hwacme
   os > homedir
   path > join
 
@@ -41,7 +42,7 @@ LOG = if IS_DEV then '--debug 2' else '>/dev/null'
 
 hostSsl = (host)=>"#{join(adir,host)}_ecc"
 
-issue = (dns, host)=>
+_issue = (dns, host)=>
   console.log dns, host
   ssl = hostSsl host
   if not existsSync ssl
@@ -65,8 +66,16 @@ issue = (dns, host)=>
   )
 
 if not IS_DEV
-  issue = retry issue
   rsync = retry rsync
+  _issue = retry _issue
+
+issue = (dns, host)=>
+  enable = await hwacme(host)
+  try
+    return await _issue(dns, host)
+  finally
+    await enable()
+  return
 
 host_all = []
 for [dns, host_li] from Object.entries HOST_DNS

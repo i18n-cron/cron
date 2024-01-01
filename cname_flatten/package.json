@@ -1,6 +1,7 @@
 {
   "type": "module",
-  "dependencies": {
-    "@3-/cname_flatten": "^0.1.11"
+  "peerDependencies": {
+    "@3-/cname_flatten": "^0.2.6",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.38.0"
   }
 }

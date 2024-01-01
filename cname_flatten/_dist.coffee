@@ -28,14 +28,20 @@ dist = (name)=>
     banner: {
       js: "import {createRequire as topLevelCreateRequire} from 'module';const require=topLevelCreateRequire(import.meta.url)"
     }
+    external: [
+      'uWebSockets.js'
+    ]
+    # loader: {
+    #   ".node": "file",
+    # }
   })
 
-  run = read run_js
-  p = run.indexOf('\n')+1
-  write(
-    run_js
-    run.slice(p)
-  )
+  # run = read run_js
+  # p = run.indexOf('\n')+1
+  # write(
+  #   run_js
+  #   run.slice(p)
+  # )
   return
 
 {argv} = process

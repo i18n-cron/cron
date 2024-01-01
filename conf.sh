@@ -10,7 +10,8 @@ set +o allexport
 
 ROOT=$CONF/$TASK
 cd $ROOT
-for sh in $(find . -type f -name "*.sh"); do
+
+for sh in $(find . \( -type f -o -type l \) -name "*.sh"); do
   echo $TASK/$(basename $sh)
   cd $ROOT
   set -o allexport

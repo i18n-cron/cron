@@ -6,9 +6,10 @@
 
 
 < ->
-  {pathname} = new URL @url
-  path = pathname.slice(1)
-
+  {path} = @
+  console.log path
+  # {pathname} = new URL @url
+  # pathname = pathname.slice(1)
   args = path.split('/')
   if args.length == 4
     if ['A','AAAA'].includes args[0]

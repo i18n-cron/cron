@@ -1,6 +1,5 @@
-FROM oven/bun:1 as base
-WORKDIR /app
-
+# FROM gcr.io/distroless/nodejs20
+FROM node:21-slim AS BASE
 # install dependencies into temp directory
 # this will cache them and speed up future builds
 # FROM base AS install
@@ -25,14 +24,26 @@ ENV NODE_ENV=production
 # RUN bun run build
 
 # copy production dependencies and source code into final image
-FROM base AS release
+# FROM base AS release
 # COPY --from=install /temp/prod/node_modules node_modules
 # COPY --from=prerelease /usr/src/app/index.ts .
 # COPY --from=prerelease /usr/src/app/package.json .
 
+WORKDIR /i
+RUN echo '{"type":"module"}' > package.json
+ADD node_modules/uWebSockets.js/uws.js node_modules/uWebSockets.js/
+ADD node_modules/uWebSockets.js/ESM_wrapper.mjs node_modules/uWebSockets.js/
+ADD node_modules/uWebSockets.js/*.node node_modules/uWebSockets.js/
+ADD node_modules/uWebSockets.js/package.json node_modules/uWebSockets.js/
 ADD lib/run.js run.js
 
+RUN ls node_modules/uWebSockets.js/*.node | grep -v $(node -e 'console.log(`${process.platform}_${process.arch}_${process.versions.modules}`)') | xargs rm
+
+FROM node:21-slim 
+
+COPY --from=BASE /i /i
+WORKDIR /i
 # run the app
-USER bun
+# USER bun
 EXPOSE 3000/tcp
-ENTRYPOINT ["bun","--smol","run","/app/run.js"]
+ENTRYPOINT ["node","run.js"]

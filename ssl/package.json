@@ -4,6 +4,7 @@
   "dependencies": {
     "@3-/alissl": "^0.1.2",
     "@3-/baidussl": "^0.1.1",
-    "@3-/dogessl": "^0.1.1"
+    "@3-/dogessl": "^0.1.1",
+    "@3-/hwdns": "^0.1.6"
   }
 }
