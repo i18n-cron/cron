@@ -12,11 +12,11 @@ NGINX_RESTART='ssl ALL=(ALL) NOPASSWD:/usr/bin/systemctl reload nginx'
 
 cat /etc/sudoers | grep "$NGINX_RESTART" || echo "$NGINX_RESTART" >>/etc/sudoers
 
-# 把 ssl 用户添加到 www 用户组
-usermod -a -G www-data ssl
+# 把 www-data 用户添加到 ssl 用户组
+usermod -a -G ssl www-data
 
 mkdir -p /opt/ssl
-chown ssl:www-data /opt/ssl
+chown ssl:ssl /opt/ssl
 chmod 750 /opt/ssl
 
 sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
