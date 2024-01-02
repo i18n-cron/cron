@@ -39,7 +39,7 @@ HOST_ALL = new Set
 
 rsync = (host, pc)=>
   HOST_ALL.add pc
-  $raw"""rsync -e "#{SSH}" --exclude='*.conf' --chown=ssl:www-data --chmod=750 --delete -aAvz ~/.acme.sh/#{host}_ecc ssl@#{pc}:/opt/ssl"""
+  $raw"""rsync -e "#{SSH}" --exclude='*.conf' --chown=ssl:ssl --chmod=750 --delete -avz ~/.acme.sh/#{host}_ecc ssl@#{pc}:/opt/ssl"""
 
 LOG = if IS_DEV then '--debug 2' else '>/dev/null'
 
