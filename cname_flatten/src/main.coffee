@@ -1,5 +1,6 @@
 #!/usr/bin/env coffee
 > ./App.js
+  ./Err.js > NotFound
   uWebSockets.js:uWs
 
 # @3-/ipreq/fTxt.js
@@ -84,17 +85,22 @@ do =>
           )
           code = '200'
         catch err
-          console.error(
-            '❌'
+          msg = [
             method
             path
-            err
+          ]
+          if err instanceof NotFound
+            code = '404'
+          else
+            code = '500'
+            msg.push err
+          console.error(
+            '❌'
+            code
+            ...msg
           )
-          r = err.toString()
-          code = '500'
         if not res.aborted
           res.cork =>
-            console.log r, typeof r
             res.writeStatus(code)
             #.writeHeader('IsExample', 'Yes')
             .end r
