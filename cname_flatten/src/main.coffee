@@ -65,7 +65,6 @@ do =>
           res.aborted = true
           return
         try
-          throw new Error("11")
           r = dump await App.call(
             new Proxy(
               {
