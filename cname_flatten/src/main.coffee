@@ -91,6 +91,7 @@ do =>
           ]
           if err instanceof NotFound
             code = '404'
+            r = ''
           else
             code = '500'
             msg.push err
