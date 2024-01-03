@@ -65,6 +65,7 @@ do =>
           res.aborted = true
           return
         try
+          throw new Error("11")
           r = dump await App.call(
             new Proxy(
               {
@@ -94,6 +95,7 @@ do =>
           else
             code = '500'
             msg.push err
+            r = err.stack.toString()
           console.error(
             '❌'
             code
