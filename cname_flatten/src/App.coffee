@@ -1,5 +1,6 @@
 > @3-/cname_flatten:flatten
-  ./Err.js > NOT_FOUND
+  @3-/uws/Err.js > NOT_FOUND
+
 {
   env
 } = process
@@ -12,9 +13,11 @@
   # pathname = pathname.slice(1)
   args = path.split('/')
   if args.length == 4
-    if ['A','AAAA'].includes args[0]
-      # A 3ti.site 3ti.site.s2-web.dogedns.com
-      return flatten(...args)
+
+    dns_type = {4:'A',6:'AAAA'}[args[0]]
+    if dns_type
+      # 4 3ti.site 3ti.site.s2-web.dogedns.com
+      return flatten(dns_type,...args.slice(1))
 
   throw NOT_FOUND
   return

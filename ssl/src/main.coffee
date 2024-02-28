@@ -6,7 +6,7 @@
   @3-/zx > $raw
   @3-/retry
   ./CONF.js > HOST_RSYNC HOST_DNS HOST_RSYNC_HOOK
-  fs > existsSync rmdirSync
+  fs > existsSync rmSync
   @3-/hwdns/acme.js:hwacme
   os > homedir
   path > join
@@ -53,10 +53,10 @@ _issue = (dns, host)=>
     server_li = ['--server google','','--server letsencrypt']
     for arg from server_li
       try
-        await $raw"""#{acme} #{arg} --dns dns_#{dns} --issue -d "#{host}" -d "*.#{host}" #{LOG}"""
+        await $raw"""#{acme} #{arg} --dns dns_#{dns} --log --issue -d "#{host}" -d "*.#{host}" #{LOG}"""
         break
       catch err
-        rmdirSync ssl, { recursive: true, force: true }
+        rmSync ssl, { recursive: true, force: true }
         if IS_DEV
           throw err
         if ++tryed == server_li.length
