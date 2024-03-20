@@ -1,7 +1,7 @@
 {
   "type": "module",
   "peerDependencies": {
-    "@3-/cname_flatten": "^0.2.9"
+    "@3-/cname_flatten": "^0.2.10"
   },
   "dependencies": {
     "@3-/err": "^0.1.4",
