@@ -1,0 +1,6 @@
+bun.lockb
+pnpm-lock.yaml
+dist/
+/conf/
+lib/
+node_modules/
