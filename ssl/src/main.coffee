@@ -6,7 +6,7 @@
   @3-/zx > $raw
   @3-/retry
   ./CONF.js > HOST_DNS
-  fs > existsSync rmSync readdirSync writeFileSync
+  fs > readFileSync existsSync rmSync readdirSync writeFileSync
   @3-/hwdns/acme.js:hwacme
   os > homedir
   path > join
