@@ -6,7 +6,7 @@
   @3-/zx > $raw
   @3-/retry
   ./CONF.js > HOST_DNS
-  fs > existsSync rmSync readdirSync
+  fs > existsSync rmSync readdirSync writeFileSync
   @3-/hwdns/acme.js:hwacme
   os > homedir
   path > join
@@ -35,6 +35,13 @@ acme = join adir,'acme.sh'
 
 if not existsSync acme
   await $"curl https://get.acme.sh | sh -s email=#{MAIL}"
+  # wait for https://github.com/acmesh-official/acme.sh/pull/5263 merge
+  dns_huaweicloud = join(acme, 'dnsapi', 'dns_huaweicloud.sh')
+  writeFileSync(
+    dns_huaweicloud
+    readFileSync(dns_huaweicloud, 'utf8').replaceAll 'recordsets?name=${_domain}"', 'recordsets?name=${_domain}&status=ACTIVE"'
+    'utf8'
+  )
   await $"rsync -av #{CONF}/ssl/acme.sh/ ~/.acme.sh"
 
 HOST_ALL = new Set
@@ -52,7 +59,7 @@ _issue = (dns, host)=>
   ssl = hostSsl host
   if not existsSync ssl
     tryed = 0
-    server_li = ['--server google','','--server letsencrypt']
+    server_li = ['','--server letsencrypt','--server google']
     for arg from server_li
       try
         await $raw"""#{acme} #{arg} --dns dns_#{dns} --log --issue -d "#{host}" -d "*.#{host}" #{LOG}"""
