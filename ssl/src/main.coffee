@@ -36,7 +36,7 @@ acme = join adir,'acme.sh'
 if not existsSync acme
   await $"curl https://get.acme.sh | sh -s email=#{MAIL}"
   # wait for https://github.com/acmesh-official/acme.sh/pull/5263 merge
-  dns_huaweicloud = join(acme, 'dnsapi', 'dns_huaweicloud.sh')
+  dns_huaweicloud = join(adir, 'dnsapi', 'dns_huaweicloud.sh')
   writeFileSync(
     dns_huaweicloud
     readFileSync(dns_huaweicloud, 'utf8').replaceAll 'recordsets?name=${_domain}"', 'recordsets?name=${_domain}&status=ACTIVE"'
@@ -62,7 +62,7 @@ _issue = (dns, host)=>
     server_li = ['','--server letsencrypt','--server google']
     for arg from server_li
       try
-        await $raw"""#{acme} #{arg} --dns dns_#{dns} --log --issue -d "#{host}" -d "*.#{host}" #{LOG}"""
+        await $raw"""#{acme} #{arg} --ecc --dns dns_#{dns} --log --issue -d "#{host}" -d "*.#{host}" #{LOG}"""
         break
       catch err
         rmSync ssl, { recursive: true, force: true }
@@ -97,7 +97,7 @@ await $"chmod 600 #{id_ed25519}"
 process.env.GIT_SSH_COMMAND="ssh -i #{id_ed25519}"
 
 cd '/tmp'
-await $"rm -rf ssl && git clone --depth=1 ssh://git@ssh.github.com:443/i18n-cron/ssl.git"
+await $"rm -rf ssl && git clone --depth=1 git@github.com:i18n-cron/ssl.git"
 cd 'ssl'
 
 for i from readdirSync adir
