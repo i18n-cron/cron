@@ -1,0 +1,11 @@
+{
+  "name": "ssl",
+  "type": "module",
+  "dependencies": {
+    "@3-/alissl": "^0.1.12",
+    "@3-/baidussl": "^0.1.6",
+    "@3-/cdnssl": "^0.1.4",
+    "@3-/dogessl": "^0.1.5",
+    "@3-/hwdns": "^0.1.21"
+  }
+}
