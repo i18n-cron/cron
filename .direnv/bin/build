@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+rm -rf lib
+
+rsync -av --include='*/' \
+  --include='*.js' \
+  --include='*.mjs' \
+  --exclude=* src/ lib/ &
+
+dir=$(pwd)
+bun x cep -o $dir/lib -c $dir/src &
+
+wait || \
+  {
+    echo "error : $?" >&2
+    exit 1
+  }

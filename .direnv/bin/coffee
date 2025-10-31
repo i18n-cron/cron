@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+PWD=$(dirname $(realpath "$0"))
+DIR=$(realpath $PWD/../..)
+
+export NODE_PATH="$DIR/node_modules:$NODE_PATH"
+
+if [ $1 ];then
+filepath=$(realpath $1)
+fi
+
+exec node --trace-uncaught \
+  --expose-gc \
+  --import "@3-/loader" \
+  --unhandled-rejections=strict $filepath ${@:2:$#}

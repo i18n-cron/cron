@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ ! -d "$1/node_modules" ]; then
+if ! [ -x "$(command -v bun)" ]; then
+  PATH_add $HOME/.bun/bin
+  if ! [ -x "$(command -v bun)" ]; then
+    curl https://bun.sh/install | bash
+  fi
+fi
+bun i --cwd $1
+fi

@@ -1,0 +1,38 @@
+on:
+  workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout private conf
+        uses: actions/checkout@v4
+        with:
+          repository: i18n-cron/conf
+          token: ${{ secrets.GH_PAT }}
+          path: conf
+
+      - name: checkout dist
+        uses: actions/checkout@v4
+        with:
+          repository: i18n-cron/dist
+          ref: ${{inputs.name}}
+          path: dist
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: ${{inputs.name}}
+        run: |
+          export NODE_ENV=production
+          wget https://raw.githubusercontent.com/i18n-cron/cron/main/conf.sh
+          TASK=${{inputs.name}} source conf.sh
+          ./dist/run

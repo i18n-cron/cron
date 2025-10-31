@@ -1,0 +1,23 @@
+# name: contabo 快照
+#
+# env:
+#   TZ: Asia/Shanghai
+#
+# on:
+#   workflow_dispatch:
+#   schedule:
+#     # 分钟 小时 日期 月份 星期（0-6）//0代表星期天
+#     - cron: '1 0 * * *'
+#   push:
+#     branches: [ main ]
+#     paths:
+#       - 'contabo.snapshot/**'
+#       - '.github/workflows/contabo.snapshot.yml'
+#       - '.github/workflows/cron.yml'
+#
+# jobs:
+#   contabo_snapshot:
+#     uses: ./.github/workflows/cron.yml
+#     with:
+#       name: contabo.snapshot
+#     secrets: inherit
