@@ -3,5 +3,7 @@
 DIR=$(dirname $(realpath "$0"))
 cd $DIR
 
-set -ex
-exec direnv exec . ./lib/main.js
+set -e
+. .envrc
+set -x
+./lib/main.js
